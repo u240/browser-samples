@@ -12,32 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-var filesToDelete = [];
+const filesToDelete = [];
 function deleteFileOnCleanup(fileId) {
   filesToDelete.push(fileId);
 }
 
 function tearDown() {
-  for (var i = 0; i < filesToDelete.length; ++i) {
-    var presentationId = filesToDelete[i];
+  for (let i = 0; i < filesToDelete.length; ++i) {
+    const presentationId = filesToDelete[i];
     gapi.client.drive.files.delete({
-      fileId: presentationId
+      fileId: presentationId,
     });
   }
 }
 
-function cleanup() {
-  return this.driveService.then((drive) => {
-    var deleteFile = Promise.denodeify(drive.files.delete).bind(drive.files);
-    return this.filesToDelete.map((id) => deleteFile({fileId: id}));
-  });
-};
-
 function createTestSpreadsheet(callback) {
   gapi.client.sheets.spreadsheets.create({
     properties: {
-      title: 'Test Spreadsheet'
-    }
+      title: 'Test Spreadsheet',
+    },
   }).then(function(sheet) {
     deleteFileOnCleanup(sheet.result.spreadsheetId);
     callback(sheet.result.spreadsheetId);
@@ -55,17 +48,17 @@ function populateValues(spreadsheetId, callback) {
             startRowIndex: 0,
             endRowIndex: 10,
             startColumnIndex: 0,
-            endColumnIndex: 10
+            endColumnIndex: 10,
           },
           cell: {
             userEnteredValue: {
-              stringValue: 'Hello'
-            }
+              stringValue: 'Hello',
+            },
           },
-          fields: 'userEnteredValue'
-        }
-      }]
-    }
+          fields: 'userEnteredValue',
+        },
+      }],
+    },
   }).then((response) => {
     callback(spreadsheetId);
   });
